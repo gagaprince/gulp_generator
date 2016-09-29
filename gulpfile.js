@@ -18,6 +18,10 @@ var rename = require('gulp-rename');
 var rev = require('gulp-rev');
 var revCollector = require('gulp-rev-collector');
 
+var connect = require('gulp-connect');
+var del = require('del');
+var vinylPaths = require('vinyl-paths');
+
 
 gulp.task("css",function(cb){
     return gulp.src('src/css/*.less')
@@ -73,6 +77,20 @@ gulp.task("clean",function(cb){
     exec('rm -rf docs');
     cb();
 });
+gulp.task("clean_js",function(cb){
+//    exec('rm -rf dist/js');
+//    del(['dist/js/*'],cb);
+//    cb();
+    return gulp.src('dist/js/*')
+        .pipe(vinylPaths(del));
+});
+gulp.task("clean_css",function(cb){
+//    exec('rm -rf dist/css');
+//    cb();
+//    del(['dist/css/*'],cb);
+    return gulp.src('dist/css/*')
+        .pipe(vinylPaths(del));
+});
 
 
 gulp.task("doc",function(cb){
@@ -89,4 +107,40 @@ gulp.task("publish",function(cb){
     //这里不能使用这种方式 因为 gulp命令执行是异步的
     sequence('clean','js','css','html')(cb);
 });
+
+gulp.task("html_reload",function(cb){
+    return gulp.src(['dist/**/*.json','src/*.html'])
+        .pipe(revCollector({
+            replaceReved: true,
+            dirReplacements: {
+                'css/': 'css/',
+                'js/': 'js/'
+            }
+        }))
+//        .pipe(htmlmin({collapseWhitespace: true}))
+        .pipe(gulp.dest('dist/'))
+        .pipe(connect.reload());
+});
+
+gulp.task('server_start',function(){
+    connect.server({
+        name: 'Dev App',
+        root: ['dist'],
+        port: 9990,
+        livereload: true
+    });
+});
+gulp.task('watch_js',function(cb){
+    sequence('clean_js','js','html_reload')(cb);
+});
+gulp.task('watch_css',function(cb){
+    sequence('clean_css','css','html_reload')(cb);
+});
+gulp.task('watch_dev',function(){
+    gulp.watch(['src/*.html'], ['html_reload']);
+    gulp.watch(['src/**/*.js'], ['watch_js']);
+    gulp.watch(['src/**/*.less'], ['watch_css']);
+});
+
+gulp.task('serve',['server_start','watch_dev']);
 
