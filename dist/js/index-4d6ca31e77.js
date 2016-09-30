@@ -1,1 +1,0 @@
-"use strict";function myAlert(r){return r+1}for(var i=0;i<10;i++);

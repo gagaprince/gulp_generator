@@ -1,1 +1,0 @@
-function add(d,a){return d+a}var i=10;i<20&&add(1,2);
