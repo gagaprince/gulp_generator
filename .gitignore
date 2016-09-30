@@ -37,7 +37,8 @@ Thumbs.db
 node_modules/
 
 # dist files
-#dist/
+dist/
+dist_webpack/
 
 
 #private config
