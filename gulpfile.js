@@ -17,36 +17,32 @@ var del = require('del');
 var vinylPaths = require('vinyl-paths');
 var webpack = require('gulp-webpack');
 
+var publishPath = 'dist';
+var devWebpackPath = 'dist_webpack';
+
+var currentPath = devWebpackPath;
 
 gulp.task("css",function(cb){
+    var cssDestPath = currentPath+'/css';
     return gulp.src('src/css/*.less')
         .pipe(less())
         .pipe(cleanCss())
         .pipe(rev())
-        .pipe(gulp.dest('dist/css'))
+        .pipe(gulp.dest(cssDestPath))
         .pipe(rev.manifest())
-        .pipe(gulp.dest('dist/css'));
-});
-
-gulp.task("webpack_css",function(cb){
-    return gulp.src('src/css/*.less')
-        .pipe(less())
-        .pipe(cleanCss())
-        .pipe(rev())
-        .pipe(gulp.dest('dist_webpack/css'))
-        .pipe(rev.manifest())
-        .pipe(gulp.dest('dist_webpack/css'));
+        .pipe(gulp.dest(cssDestPath));
 });
 
 gulp.task("js",function(cb){
+    var jsDestPath = currentPath+'/js';
     return gulp.src('src/js/*')
         .pipe(stripDebug())
         .pipe(stripComments())
         .pipe(uglify())
         .pipe(rev())
-        .pipe(gulp.dest('dist/js'))
+        .pipe(gulp.dest(jsDestPath))
         .pipe(rev.manifest())
-        .pipe(gulp.dest('dist/js'));
+        .pipe(gulp.dest(jsDestPath));
 });
 
 gulp.task("webpack_js",function(cb){
@@ -60,7 +56,9 @@ gulp.task("webpack_js",function(cb){
 });
 
 gulp.task("html",function(cb){
-    return gulp.src(['dist/**/*.json','src/*.html'])
+    var manifestPath = currentPath+'/**/*.json';
+    var htmlDestPath = currentPath+'/';
+    return gulp.src([manifestPath,'src/*.html'])
         .pipe(revCollector({
             replaceReved: true,
             dirReplacements: {
@@ -68,28 +66,13 @@ gulp.task("html",function(cb){
                 'js/': 'js/'
             }
         }))
-        .pipe(gulp.dest('dist/'));
+        .pipe(gulp.dest(htmlDestPath));
 });
 
-gulp.task("webpack_html",function(cb){
-    return gulp.src(['dist_webpack/**/*.json','src/*.html'])
-        .pipe(revCollector({
-            replaceReved: true,
-            dirReplacements: {
-                'css/': 'css/',
-                'js/': 'js/'
-            }
-        }))
-        .pipe(gulp.dest('dist_webpack/'));
-});
 
 gulp.task("clean",function(cb){
-    return gulp.src('dist/*')
-        .pipe(vinylPaths(del));
-});
-
-gulp.task("clean_webpack",function(cb){
-    return gulp.src('dist_webpack/*')
+    var cleanPath = currentPath+'/*';
+    return gulp.src(cleanPath)
         .pipe(vinylPaths(del));
 });
 
@@ -101,10 +84,11 @@ gulp.task("doc",function(cb){
 
 
 gulp.task("publish",function(cb){
+    currentPath =publishPath;
     sequence('clean','js','css','html')(cb);
 });
 
 gulp.task("publish_webpack",function(cb){
-    sequence('clean_webpack','webpack_js','webpack_css','webpack_html')(cb);
+    sequence('clean','js','css','html')(cb);
 });
 
