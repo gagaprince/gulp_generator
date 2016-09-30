@@ -1,8 +1,19 @@
+"use strict";
+var fs = require('fs');
+var path = require('path');
+
+var rootPath = __dirname;
+var entryPath = '/src/js/entry/'
+var entryFiles = fs.readdirSync(path.join(rootPath,entryPath));
+var entryObj = {};
+
+entryFiles.forEach(function(file){
+    var fileName = file.split('-')[0];
+    entryObj[fileName]='.'+entryPath+file;
+});
+
 module.exports = {
-    entry:{
-        index:'./src/js/entry/index-entry.js',
-        page:'./src/js/entry/page-entry.js'
-    },
+    entry:entryObj,
     output: {
         filename: "[name].js"
     }
