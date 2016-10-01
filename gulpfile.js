@@ -17,12 +17,18 @@ var del = require('del');
 var vinylPaths = require('vinyl-paths');
 var webpack = require('gulp-webpack');
 var gulpif = require('gulp-if');
+//var bower = require('gulp-bower');
 
 var publishPath = 'dist';
 var devWebpackPath = 'dist_webpack';
 
 var currentPath = devWebpackPath;
 var devMode = true;
+
+/*gulp.task('bower',function(){
+    return bower()
+        .pipe(gulp.dest('lib/'));
+});*/
 
 gulp.task("css",function(cb){
     var cssDestPath = currentPath+'/src/css';
@@ -46,6 +52,14 @@ gulp.task("js",function(cb){
         .pipe(gulp.dest(jsDestPath))
         .pipe(rev.manifest())
         .pipe(gulp.dest(jsDestPath));
+});
+
+gulp.task("lib",function(){
+    var libDestPath = currentPath+'/lib';
+    gulp.src('bower_components/zepto/zepto.min.js')
+        .pipe(gulp.dest(libDestPath));
+    return gulp.src('bower_components/jQuery/dist/jquery.min.js')
+        .pipe(gulp.dest(libDestPath));
 });
 
 gulp.task("html",function(cb){
@@ -117,11 +131,11 @@ gulp.task('open_brower',['serve'],function(){
 gulp.task("publish",function(cb){
     currentPath =publishPath;
     devMode = false;
-    sequence('clean','js','css','html')(cb);
+    sequence('clean','lib','js','css','html')(cb);
 });
 
 gulp.task("publish_webpack",function(cb){
-    sequence('clean','js','css','html')(cb);
+    sequence('clean','lib','js','css','html')(cb);
 });
 
 gulp.task('serve',['publish_webpack','server_start','watch_dev']);
