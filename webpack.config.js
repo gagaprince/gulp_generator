@@ -3,7 +3,7 @@ var fs = require('fs');
 var path = require('path');
 
 var rootPath = __dirname;
-var entryPath = '/src/js/entry/'
+var entryPath = '/app/src/js/entry/'
 var entryFiles = fs.readdirSync(path.join(rootPath,entryPath));
 var entryObj = {};
 
