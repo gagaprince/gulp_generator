@@ -5,10 +5,11 @@
  * @returns {*}
  */
 function myAlert(i){
-    return i+1;
+    return i+7;
 }
 for(var i=0;i<10;i++){
 }
+//alert(myAlert(9));
 //这里是注释
 /*debug start*/
 console.log("finish");
