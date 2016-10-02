@@ -58,6 +58,8 @@ gulp.task("lib",function(){
     var libDestPath = currentPath+'/lib';
     gulp.src('bower_components/zepto/zepto.min.js')
         .pipe(gulp.dest(libDestPath));
+    gulp.src('bower_components/vue/dist/vue.min.js')
+        .pipe(gulp.dest(libDestPath));
     return gulp.src('bower_components/jQuery/dist/jquery.min.js')
         .pipe(gulp.dest(libDestPath));
 });
