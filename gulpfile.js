@@ -30,6 +30,11 @@ var devMode = true;
         .pipe(gulp.dest('lib/'));
 });*/
 
+gulp.task("res",function(){
+    var resDestPath = currentPath+'/res';
+    return gulp.src('app/res/**/*')
+        .pipe(gulp.dest(resDestPath));
+});
 gulp.task("css",function(cb){
     var cssDestPath = currentPath+'/src/css';
     return gulp.src('app/src/css/*.less')
@@ -131,13 +136,13 @@ gulp.task('open_brower',['serve'],function(){
 gulp.task("publish",function(cb){
     currentPath =publishPath;
     devMode = false;
-    sequence('clean','lib','js','css','html')(cb);
+    sequence('clean','lib','js','css','res','html')(cb);
 });
 
 gulp.task("publish_webpack",function(cb){
-    sequence('clean','lib','js','css','html')(cb);
+    sequence('clean','lib','js','css','res','html')(cb);
 });
 
 gulp.task('serve',['publish_webpack','server_start','watch_dev']);
 
-gulp.task('default',['open_brower']);
+gulp.task('default',['serve']);
